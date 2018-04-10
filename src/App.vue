@@ -9,7 +9,11 @@
       <span class="login">登录</span>
     </header>
     <div class="topbg">
-      <img class="login" src="./assets/timg.gif" alt="">
+      <div class="person">
+        <img src="./assets/person.jpg" alt="">
+      </div>
+      <p class="name">yuri</p>
+      <p class="zuoyouming">诗和远方的田园</p>
     </div>
     <router-view/>
   </div>
@@ -33,19 +37,47 @@ export default {
   text-align: center;
   color: #2c3e50;
   background: #f8f8f9;
+  position: relative;
+}
+.person img{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  position: absolute;
+  top: 100px;
+  left: calc(50% - 50px);
+}
+.name{
+  position: absolute;
+  top: 210px;
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  color: #fff;
+}
+.zuoyouming{
+  position: absolute;
+  top: 235px;
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  color: #fff;
 }
 .topbg{
   position: absolute;
   top: 0;
-}
-.topbg img{
+  left: 0;
   width: 100%;
+  height: 400px;
+  background: url(./assets/timg.jpg) no-repeat;
+  background-size: cover;
 }
 .main-head{
   position: relative;
   height: 44px;
   width: 100%;
   min-width: 1200px;
+  z-index: 2;
 }
 .logo{
   position: absolute;
