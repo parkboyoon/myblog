@@ -35,25 +35,25 @@
         <div class="text item">
           <ul>
             <li>
-              <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+              <el-tooltip class="item" effect="dark" content="点击弹出QQ号" placement="top">
                 <el-button><img src="../assets/qq.png" alt=""></el-button>
               </el-tooltip>
               <p>QQ</p>
             </li>
             <li>
-              <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+              <el-tooltip class="item" effect="dark" content="点击弹出微信二维码" placement="top">
                 <el-button><img src="../assets/weixin.png" alt=""></el-button>
               </el-tooltip>
               <p>微信</p>
             </li>
             <li>
-              <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+              <el-tooltip class="item" effect="dark" content="点击跳转至微博" placement="top">
                 <el-button><img src="../assets/weibo.png" alt=""></el-button>
               </el-tooltip>
               <p>微博</p>
             </li>
             <li>
-              <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+              <el-tooltip class="item" effect="dark" content="点击显示邮箱号" placement="top">
                 <el-button><img src="../assets/youxiang.png" alt=""></el-button>
               </el-tooltip>
               <p>邮箱</p>
@@ -63,118 +63,71 @@
       </el-card>
     </div>
     <div class="index_right">
-      <el-card class="box-card-blog" shadow="hover">
-        <h3 class="blog-title">前端初学路线指南</h3>
-        <div class="blog-content">
-          <div class="blog-img-wrap"><img src="../assets/person.jpg" alt=""></div>
-          <div class="blog-text-wrap">
-            之所以写这么长，是因为题主洋洋洒洒列了一大堆想学的东西，过于多了，贪多嚼不烂。
-
-            而且，学东西，总要分个轻重缓急的。任何一门知识，都有个层次，有些知识的前置知识多，后置知识少，就适合后学；有些知识前置知识少，后置知识多，就得先学，而且要认真学；还有些知识，和科目中的大部分东西都不相关，一时半会儿也用不上，这种就可以暂时搁不学（比如canvas）
+      <div v-for="item in blogList" @click="godetail(item.id)">
+        <el-card class="box-card-blog" shadow="hover">
+          <h3 class="blog-title">{{item.title}}</h3>
+          <div class="blog-content">
+            <div class="blog-img-wrap"><img :src="item.img" alt=""></div>
+            <div class="blog-text-wrap">
+              文章摘要：{{item.zaiyao.substr(0, 130)}}...
+            </div>
           </div>
-        </div>
-        <div>
-          <span></span>
-        </div>
-      </el-card>
+          <div class="blog-foot">
+            <span class="blog-foot-item"><i class="el-icon-edit"></i> <span>作者: {{item.author}}</span></span>
+            <span class="blog-foot-item"><i
+              class="el-icon-time"></i> <span>发布时间: {{item.time.split(' ')[0]}}</span></span>
+            <span class="blog-foot-item"><i class="el-icon-view"></i> <span>围观: {{item.count}}</span></span>
+          </div>
+        </el-card>
+      </div>
+    </div>
+    <div class="clearfloat">
+      <el-pagination background layout="prev, pager, next" :current-page="pageNum" @current-change="pagechange" :page-count="totalPage">
+      </el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+  import api from '../api'
   export default{
-      data() {
-          return {}
+    data() {
+      return {
+        blogList: [],
+        totalPage: 1,
+        pageNum: 1
       }
+    },
+    created() {
+      this.getdata()
+    },
+    methods: {
+      pagechange(val) {
+          this.pageNum = val
+          this.getdata()
+      },
+      getdata() {
+        this.$http.get(api.getblog, {
+          params: {
+            colunm: '',
+            pageSize: 5,
+            pageNum: this.pageNum
+          }
+        }).then(res => {
+          if (res.data.resultCode == 200) {
+            this.totalPage = res.data.totleNum
+            let data = res.data.data
+            this.blogList = data
+          }
+        })
+      },
+      godetail(id) {
+        this.$router.push({path: '/detail', query: {id: id}})
+      }
+    }
   }
 </script>
 
 <style>
-  .el-button{
-    border: none;
-  }
-  .index_right{
-    float: left;
-    width: 70%;
-    padding: 0 20px 20px 50px;
-    box-sizing: border-box;
-  }
-  .box-card-blog .blog-title{
-    font-size: 28px;
-    line-height: 50px;
-    font-weight: 600;
-    letter-spacing: 5px;
-  }
-  .blog-content{
-    width: 100%;
-    height: 160px;
-    position: relative;
-    margin-top: 20px;
-  }
-  .blog-content .blog-img-wrap{
-    width: 30%;
-    height: 160px;
-    float: left;
-    border: 1px solid #000;
-    border-radius: 5px;
-  }
-  .blog-content .blog-img-wrap img{
-    width: 96%;
-    height: 96%;
-    margin: 2% 2%;
-  }
-  .blog-content .blog-text-wrap{
-    width: calc(70% - 2px);
-    float: left;
-  }
-  .index_left{
-    width: 30%;
-    float: left;
-    padding-left: 15px;
-    box-sizing: border-box;
-  }
-  .index_left .box-card-family,.index_left .box-card-contact{
-    margin-top: 20px;
-  }
-  .index_left .box-card-contact .item ul li{
-    width: 25%;
-    float: left;
-  }
-  .index_left .box-card-contact .item ul li img{
-    width: 100%;
-  }
-  .index_left .box-card-contact .item ul li p{
-    margin-top: -5px;
-    margin-bottom: 15px;
-    font-size: 14px;
-  }
-  .index_left .box-card-hot .item ul li{
-    text-align: left;
-    line-height: 30px;
-    position: relative;
-  }
-  .index_left .box-card-hot .item ul li span.sort-hot{
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #909399;
-    display: inline-block;
-    text-align: center;
-    line-height: 22px;
-    position: absolute;
-    top: 2px;
-    color: #fff;
-  }
-  .index_left .box-card-hot .item ul li:nth-of-type(1) span.sort-hot{
-    background: #409EFF;
-  }
-  .index_left .box-card-hot .item ul li:nth-of-type(2) span.sort-hot{
-    background: #67C23A;
-  }
-  .index_left .box-card-hot .item ul li:nth-of-type(3) span.sort-hot{
-    background: #E6A23C;
-  }
-  .index_left .box-card-hot .item ul li span.text-hot{
-    margin-left: 30px;
-  }
+
 </style>
